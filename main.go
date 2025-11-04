@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/ngfalabella/Go-PostgreSQL-/db"
+	"github.com/ngfalabella/Go-PostgreSQL-/models"
 	"github.com/ngfalabella/Go-PostgreSQL-/routes"
 )
 
@@ -14,6 +15,10 @@ import (
 func main() {
 
 	db.DBConection()
+
+	db.DB.AutoMigrate( &models.Task{} )
+	db.DB.AutoMigrate( &models.User{} )
+	
 
 	router := mux.NewRouter()
 

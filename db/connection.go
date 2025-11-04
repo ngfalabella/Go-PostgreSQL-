@@ -8,7 +8,8 @@ import (
 )
 
 //gormgolang
-var DSN string = "host=localhost user=postgres password=123456 dbname=test port=5432"
+var DSN string = "host=localhost user=postgres password=123456 dbname=golanguno port=5432"
+
 var DB *gorm.DB
 
 func DBConection() {
@@ -17,6 +18,6 @@ func DBConection() {
 	if error != nil {
 		log.Fatal(error)
 	}else{
-		log.Println("Base de datos CONECTADA")
+		log.Println("Succes se conecto insta")
 	}
 }
