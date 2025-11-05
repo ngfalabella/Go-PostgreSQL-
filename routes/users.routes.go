@@ -2,18 +2,35 @@ package routes
 
 import (
 	"encoding/json"
+	_"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/ngfalabella/Go-PostgreSQL-/db"
 	"github.com/ngfalabella/Go-PostgreSQL-/models"
 )
 
 func GetUsersHandler(w http.ResponseWriter , r *http.Request ) {
-	w.Write([]byte("Listado de usuarios"))
+	var users []models.User
+	db.DB.Find(&users)
+	json.NewEncoder(w).Encode(&users)
 }
 
 func GetUserHandler(w http.ResponseWriter , r *http.Request ) {
-	w.Write([]byte("Usuario individual"))
+	var user models.User
+	params := mux.Vars(r)
+
+	db.DB.First(&user ,params["id"])
+
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No se encontro"))
+		return
+	}
+
+	db.DB.Model(&user).Association("Task").Find(&user.Task)
+
+	json.NewEncoder(w).Encode(&user)
 }
 
 func PostUserHandler(w http.ResponseWriter , r *http.Request ) {
@@ -34,5 +51,20 @@ func PostUserHandler(w http.ResponseWriter , r *http.Request ) {
 	json.NewEncoder(w).Encode(&user)
 }
 func DeleteUserHandler(w http.ResponseWriter , r *http.Request ) {
-	w.Write([]byte("Usuario eliminado"))
+	var user models.User
+
+	params := mux.Vars(r)
+
+	db.DB.First(&user, params["id"])
+
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Usuario no encontrado"))
+		return
+	}
+
+	db.DB.Unscoped().Delete(&user)
+	w.WriteHeader(http.StatusOK)
+
+	
 }
